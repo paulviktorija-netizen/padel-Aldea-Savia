@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // On Railway, store data in /data (persistent volume). Fallback to local.
-const DATA_DIR = process.env.DATA_DIR || __dirname;
+const DATA_DIR = process.env.DATA_DIR || "/tmp";
 const DB_FILE = path.join(DATA_DIR, "reservations.json");
 
 // ── Simple JSON file database ────────────────────────────────────────────────
