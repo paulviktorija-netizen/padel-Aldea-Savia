@@ -1,37 +1,32 @@
 const express = require("express");
-const Database = require("better-sqlite3");
+const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// On Railway, store DB in /data (persistent volume). Fallback to local.
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, "reservations.db");
+// On Railway, store data in /data (persistent volume). Fallback to local.
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+const DB_FILE = path.join(DATA_DIR, "reservations.json");
 
-const db = new Database(DB_PATH);
+// ── Simple JSON file database ────────────────────────────────────────────────
+function readDB() {
+  try {
+    return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+  } catch {
+    return [];
+  }
+}
 
-// ── Schema ──────────────────────────────────────────────────────────────────
-db.exec(`
-  CREATE TABLE IF NOT EXISTS reservations (
-    id TEXT PRIMARY KEY,
-    date TEXT NOT NULL,
-    slot TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    unit TEXT NOT NULL,
-    phase TEXT NOT NULL,
-    companions TEXT NOT NULL,
-    created_at INTEGER NOT NULL,
-    UNIQUE(date, slot)
-  )
-`);
+function writeDB(data) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
+}
 
-// ── Middleware ───────────────────────────────────────────────────────────────
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+// Initialize file if missing
+if (!fs.existsSync(DB_FILE)) writeDB([]);
 
-// ── Config (change ACCESS_CODE here or via env var) ──────────────────────────
+// ── Config ───────────────────────────────────────────────────────────────────
 const ACCESS_CODE = process.env.ACCESS_CODE || "ALDEАСAVIA3";
 
 const SLOTS = [
@@ -53,13 +48,13 @@ function genId() {
 }
 
 function getWeekBounds(dateStr) {
-  const d = new Date(dateStr + "T12:00:00Z");
-  const day = d.getUTCDay();
+  const d = new Date(dateStr + "T12:00:00");
+  const day = d.getDay(); // 0 = Sunday
   const diffToMon = day === 0 ? -6 : 1 - day;
   const mon = new Date(d);
-  mon.setUTCDate(d.getUTCDate() + diffToMon);
+  mon.setDate(d.getDate() + diffToMon);
   const sun = new Date(mon);
-  sun.setUTCDate(mon.getUTCDate() + 6);
+  sun.setDate(mon.getDate() + 6);
   return {
     monStr: mon.toISOString().slice(0, 10),
     sunStr: sun.toISOString().slice(0, 10),
@@ -69,14 +64,17 @@ function getWeekBounds(dateStr) {
 function slotStartMs(dateStr, slotLabel) {
   const hhmm = slotLabel.split("–")[0].trim();
   const [hh, mm] = hhmm.split(":").map(Number);
-  const d = new Date(`${dateStr}T${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:00`);
+  const d = new Date(`${dateStr}T${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}:00`);
   return d.getTime();
 }
 
-// ── Auth check endpoint ──────────────────────────────────────────────────────
+// ── Middleware ───────────────────────────────────────────────────────────────
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
 app.post("/api/auth", (req, res) => {
-  const { code } = req.body;
-  if (code === ACCESS_CODE) return res.json({ ok: true });
+  if (req.body.code === ACCESS_CODE) return res.json({ ok: true });
   res.status(401).json({ error: "Invalid access code." });
 });
 
@@ -84,38 +82,19 @@ app.post("/api/auth", (req, res) => {
 app.get("/api/reservations", (req, res) => {
   const { date } = req.query;
   if (!date) return res.status(400).json({ error: "date param required" });
-  const rows = db.prepare(
-    "SELECT * FROM reservations WHERE date = ? ORDER BY slot"
-  ).all(date);
-  res.json(rows.map(r => ({
-    id: r.id,
-    date: r.date,
-    slot: r.slot,
-    firstName: r.first_name,
-    lastName: r.last_name,
-    unit: r.unit,
-    phase: r.phase,
-    companions: r.companions,
-  })));
+  const rows = readDB().filter(r => r.date === date);
+  res.json(rows);
 });
 
-// ── GET reservations by unit + lastName ─────────────────────────────────────
+// ── GET my reservations ──────────────────────────────────────────────────────
 app.get("/api/my-reservations", (req, res) => {
   const { lastName, unit } = req.query;
   if (!lastName || !unit) return res.status(400).json({ error: "lastName and unit required" });
-  const rows = db.prepare(
-    "SELECT * FROM reservations WHERE lower(last_name) = lower(?) AND lower(unit) = lower(?) ORDER BY date, slot"
-  ).all(lastName, unit);
-  res.json(rows.map(r => ({
-    id: r.id,
-    date: r.date,
-    slot: r.slot,
-    firstName: r.first_name,
-    lastName: r.last_name,
-    unit: r.unit,
-    phase: r.phase,
-    companions: r.companions,
-  })));
+  const rows = readDB().filter(
+    r => r.lastName.toLowerCase() === lastName.toLowerCase() &&
+         r.unit.toLowerCase() === unit.toLowerCase()
+  ).sort((a, b) => a.date.localeCompare(b.date) || a.slot.localeCompare(b.slot));
+  res.json(rows);
 });
 
 // ── POST create reservation ──────────────────────────────────────────────────
@@ -125,7 +104,6 @@ app.post("/api/reservations", (req, res) => {
   if (!date || !slot || !firstName || !lastName || !unit || !phase || !companions) {
     return res.status(400).json({ error: "All fields are required." });
   }
-
   if (!SLOTS.includes(slot)) {
     return res.status(400).json({ error: "Invalid slot." });
   }
@@ -138,31 +116,41 @@ app.post("/api/reservations", (req, res) => {
   }
   const hoursAhead = (slotMs - now) / 3_600_000;
   if (hoursAhead > MAX_ADVANCE_HOURS) {
-    return res.status(400).json({ error: `Slots can only be booked up to ${MAX_ADVANCE_HOURS} hours in advance.` });
+    return res.status(400).json({
+      error: `Slots can only be booked up to ${MAX_ADVANCE_HOURS} hours in advance.`,
+    });
+  }
+
+  const db = readDB();
+
+  // Slot already taken?
+  if (db.find(r => r.date === date && r.slot === slot)) {
+    return res.status(409).json({ error: "This slot was just booked by someone else. Please choose another." });
   }
 
   // Weekly limit
   const { monStr, sunStr } = getWeekBounds(date);
-  const weekCount = db.prepare(
-    "SELECT COUNT(*) as cnt FROM reservations WHERE lower(last_name) = lower(?) AND lower(unit) = lower(?) AND date >= ? AND date <= ?"
-  ).get(lastName, unit, monStr, sunStr).cnt;
+  const weekCount = db.filter(
+    r => r.lastName.toLowerCase() === lastName.toLowerCase() &&
+         r.unit.toLowerCase() === unit.toLowerCase() &&
+         r.date >= monStr && r.date <= sunStr
+  ).length;
 
   if (weekCount >= MAX_PER_WEEK) {
-    return res.status(400).json({ error: `You already have ${MAX_PER_WEEK} reservations this week. The weekly limit is ${MAX_PER_WEEK}.` });
+    return res.status(400).json({
+      error: `You already have ${MAX_PER_WEEK} reservations this week. The weekly limit is ${MAX_PER_WEEK}.`,
+    });
   }
 
-  try {
-    const id = genId();
-    db.prepare(
-      "INSERT INTO reservations (id, date, slot, first_name, last_name, unit, phase, companions, created_at) VALUES (?,?,?,?,?,?,?,?,?)"
-    ).run(id, date, slot, firstName, lastName, unit, phase, companions, now);
-    res.json({ id });
-  } catch (e) {
-    if (e.message.includes("UNIQUE")) {
-      return res.status(409).json({ error: "This slot was just booked by someone else. Please choose another." });
-    }
-    res.status(500).json({ error: "Server error." });
-  }
+  const entry = {
+    id: genId(),
+    date, slot, firstName, lastName, unit, phase, companions,
+    createdAt: now,
+  };
+
+  db.push(entry);
+  writeDB(db);
+  res.json({ id: entry.id });
 });
 
 // ── DELETE cancel reservation ────────────────────────────────────────────────
@@ -174,21 +162,25 @@ app.delete("/api/reservations/:id", (req, res) => {
     return res.status(400).json({ error: "Last name and unit required to cancel." });
   }
 
-  const row = db.prepare("SELECT * FROM reservations WHERE id = ?").get(id);
+  const db = readDB();
+  const row = db.find(r => r.id === id);
+
   if (!row) return res.status(404).json({ error: "Reservation not found." });
 
   if (
-    row.last_name.toLowerCase() !== lastName.toLowerCase() ||
+    row.lastName.toLowerCase() !== lastName.toLowerCase() ||
     row.unit.toLowerCase() !== unit.toLowerCase()
   ) {
-    return res.status(403).json({ error: "The name or unit number does not match this reservation. Only the person who booked can cancel." });
+    return res.status(403).json({
+      error: "The name or unit number does not match this reservation. Only the person who booked can cancel.",
+    });
   }
 
-  db.prepare("DELETE FROM reservations WHERE id = ?").run(id);
+  writeDB(db.filter(r => r.id !== id));
   res.json({ ok: true });
 });
 
 // ── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`Padel reservation server running on http://localhost:${PORT}`);
+  console.log(`Padel server running → http://localhost:${PORT}`);
 });
