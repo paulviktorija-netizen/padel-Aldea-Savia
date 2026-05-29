@@ -111,13 +111,13 @@
 
 <div id="lock-screen">
   <div class="lang-toggle lock">
-    <button class="lang-btn active" id="lock-lang-en" onclick="setLang('en')" title="English">🇬🇧</button>
-    <button class="lang-btn" id="lock-lang-es" onclick="setLang('es')" title="Espanol">🇪🇸</button>
+    <button class="lang-btn active" id="lock-lang-en" onclick="setLang('en')" title="English">&#127468;&#127463;</button>
+    <button class="lang-btn" id="lock-lang-es" onclick="setLang('es')" title="Espanol">&#127466;&#127480;</button>
   </div>
   <div class="card">
-    <div class="logo">🎾</div>
+    <div class="logo">&#127934;</div>
     <h1>Padel Court</h1>
-    <div class="subtitle">Aldea Savia · Tulum · Phase 3</div>
+    <div class="subtitle">Aldea Savia &middot; Tulum &middot; Phase 3</div>
     <p id="lock-desc" style="font-size:13px;color:#6b7280;margin-bottom:20px;"></p>
     <input type="password" id="passcode-input" autocomplete="off" />
     <div class="error" id="lock-error"></div>
@@ -130,13 +130,13 @@
   <header>
     <div class="header-inner">
       <div class="header-left">
-        <h1>🎾 Padel Court — Aldea Savia</h1>
+        <h1>&#127934; Padel Court &mdash; Aldea Savia</h1>
         <p id="header-sub"></p>
       </div>
       <div class="header-right">
         <div class="lang-toggle">
-          <button class="lang-btn active" id="app-lang-en" onclick="setLang('en')" title="English">🇬🇧</button>
-          <button class="lang-btn" id="app-lang-es" onclick="setLang('es')" title="Espanol">🇪🇸</button>
+          <button class="lang-btn active" id="app-lang-en" onclick="setLang('en')" title="English">&#127468;&#127463;</button>
+          <button class="lang-btn" id="app-lang-es" onclick="setLang('es')" title="Espanol">&#127466;&#127480;</button>
         </div>
         <button class="btn-logout" id="btn-logout" onclick="logout()"></button>
       </div>
@@ -149,14 +149,14 @@
     </div>
   </div>
   <div id="panel-book" class="main">
-    <div class="info-box"><span class="icon">ℹ️</span><span id="info-text"></span></div>
+    <div class="info-box"><span class="icon">&#8505;&#65039;</span><span id="info-text"></span></div>
     <div class="date-nav">
-      <button id="btn-prev" onclick="changeDay(-1)">‹</button>
+      <button id="btn-prev" onclick="changeDay(-1)">&#8249;</button>
       <div class="date-label">
         <div class="day-name" id="day-name"></div>
         <div class="day-date" id="day-date"></div>
       </div>
-      <button id="btn-next" onclick="changeDay(1)">›</button>
+      <button id="btn-next" onclick="changeDay(1)">&#8250;</button>
     </div>
     <div class="slots-grid" id="slots-grid"></div>
   </div>
@@ -236,7 +236,7 @@ const T={
     lockError:"Incorrect access code. Please try again.",
     lockNetError:"Cannot reach server. Please try again.",
     headerSub:"Phase 3 - Tulum - Residents only",logout:"Logout",
-    tabBook:"📅 Book a slot",tabMy:"🗂 My reservations",
+    tabBook:"Book a slot",tabMy:"My reservations",
     infoText:"Slots can be booked up to <strong>24 hours in advance</strong>. Each resident may book <strong>maximum 2 slots per week</strong> (Monday-Sunday). Only the person who booked a slot can cancel it.",
     loading:"Loading...",loadError:"Could not load slots. Please refresh.",
     statusBooked:"Booked",statusPast:"Past",statusNotOpen:"Not yet open",statusFree:"Available",
@@ -251,7 +251,7 @@ const T={
     lblCompanions:"Companion name(s) *",
     companionsHint:"Required - list all players joining you.",
     companionsPh:"e.g. Juan Garcia, Sofia Lopez",firstnamePh:"e.g. Maria",lastnamePh2:"e.g. Garcia",
-    modalCancel:"Cancel",confirmBtn:"Confirm booking",bookingOk:"Booking confirmed! 🎾",
+    modalCancel:"Cancel",confirmBtn:"Confirm booking",bookingOk:"Booking confirmed!",
     allRequired:"All fields are required. Please fill in every field before confirming.",
     netError:"Network error. Please try again.",cancelTitle:"Cancel reservation",
     cancelDesc:"To confirm cancellation, verify your identity.",
@@ -269,7 +269,7 @@ const T={
     lockError:"Codigo de acceso incorrecto. Intentalo de nuevo.",
     lockNetError:"No se puede conectar al servidor. Intentalo de nuevo.",
     headerSub:"Fase 3 - Tulum - Solo residentes",logout:"Salir",
-    tabBook:"📅 Reservar",tabMy:"🗂 Mis reservas",
+    tabBook:"Reservar",tabMy:"Mis reservas",
     infoText:"Las pistas se pueden reservar con un maximo de <strong>24 horas de antelacion</strong>. Cada residente puede reservar <strong>maximo 2 veces por semana</strong> (lunes-domingo). Solo la persona que reservo puede cancelar.",
     loading:"Cargando...",loadError:"No se pudieron cargar los horarios. Actualiza la pagina.",
     statusBooked:"Reservado",statusPast:"Pasado",statusNotOpen:"No disponible aun",statusFree:"Disponible",
@@ -284,7 +284,7 @@ const T={
     lblCompanions:"Nombre(s) de acompanante(s) *",
     companionsHint:"Obligatorio - indica todos los jugadores que te acompanan.",
     companionsPh:"ej. Juan Garcia, Sofia Lopez",firstnamePh:"ej. Maria",lastnamePh2:"ej. Garcia",
-    modalCancel:"Cancelar",confirmBtn:"Confirmar reserva",bookingOk:"Reserva confirmada! 🎾",
+    modalCancel:"Cancelar",confirmBtn:"Confirmar reserva",bookingOk:"Reserva confirmada!",
     allRequired:"Todos los campos son obligatorios. Por favor rellena todo antes de confirmar.",
     netError:"Error de red. Intentalo de nuevo.",cancelTitle:"Cancelar reserva",
     cancelDesc:"Para confirmar la cancelacion, verifica tu identidad.",
@@ -344,13 +344,13 @@ function applyTranslations(){
 }
 applyTranslations();
 
-let currentDate=new Date();currentDate.setHours(0,0,0,0);
-let pendingSlot=null,pendingCancelId=null;
+let currentDate=new Date(); currentDate.setHours(0,0,0,0);
+let pendingSlot=null, pendingCancelId=null;
 
 async function checkPasscode(){
   const code=document.getElementById("passcode-input").value.trim();
   const btn=document.getElementById("lock-btn");
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
   try{
     const res=await fetch("/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code})});
     if(res.ok){sessionStorage.setItem("auth","1");document.getElementById("lock-screen").style.display="none";document.getElementById("app").style.display="block";renderSlots();}
@@ -375,13 +375,15 @@ function formatDateDisplay(dateStr){
   const d=new Date(dateStr+"T12:00:00");
   return T[lang].dayNamesShort[d.getDay()]+" "+d.getDate()+" "+T[lang].monthNamesShort[d.getMonth()]+" "+d.getFullYear();
 }
+const TULUM_OFFSET_MS=5*60*60*1000;
 function slotStartMs(dateStr,slotLabel){
   const hhmm=slotLabel.split("-")[0].trim();
-  const[hh,mm]=hhmm.split(":").map(Number);
-  return new Date(dateStr+"T"+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":00").getTime();
+  const [hh,mm]=hhmm.split(":").map(Number);
+  const [yyyy,mo,dd]=dateStr.split("-").map(Number);
+  return Date.UTC(yyyy,mo-1,dd,hh,mm,0)+TULUM_OFFSET_MS;
 }
-function isSlotInPast(d,s){return slotStartMs(d,s)<Date.now();}
-function isWithin24h(d,s){const diff=(slotStartMs(d,s)-Date.now())/3600000;return diff>=0&&diff<=24;}
+function isSlotInPast(dateStr,slotLabel){return slotStartMs(dateStr,slotLabel)<Date.now();}
+function isWithin24h(dateStr,slotLabel){const diff=(slotStartMs(dateStr,slotLabel)-Date.now())/3600000;return diff>=0&&diff<=24;}
 
 function switchTab(tab){
   document.getElementById("panel-book").style.display=tab==="book"?"block":"none";
@@ -411,10 +413,10 @@ async function renderSlots(){
   document.getElementById("day-name").textContent=isToday?t("today")+" - "+T[lang].dayNames[currentDate.getDay()]:T[lang].dayNames[currentDate.getDay()];
   document.getElementById("day-date").textContent=currentDate.getDate()+" "+T[lang].monthNames[currentDate.getMonth()]+" "+currentDate.getFullYear();
   const grid=document.getElementById("slots-grid");
-  grid.innerHTML='<div class="empty-state"><div class="icon">⏳</div>'+t("loading")+'</div>';
+  grid.innerHTML='<div class="empty-state"><div class="icon">&#9203;</div>'+t("loading")+'</div>';
   let reservations=[];
   try{const res=await fetch("/api/reservations?date="+dateStr);reservations=await res.json();}
-  catch{grid.innerHTML='<div class="empty-state"><div class="icon">⚠️</div>'+t("loadError")+'</div>';return;}
+  catch{grid.innerHTML='<div class="empty-state"><div class="icon">&#9888;&#65039;</div>'+t("loadError")+'</div>';return;}
   grid.innerHTML="";
   SLOTS.forEach(slot=>{
     const booking=reservations.find(r=>r.slot===slot);
@@ -424,14 +426,14 @@ async function renderSlots(){
     card.className="slot-card "+(booking?"booked":(canBook?"available":""));
     let statusHtml,extraHtml="";
     if(booking){
-      statusHtml='<span class="slot-status taken">● '+t("statusBooked")+'</span>';
-      extraHtml='<div class="slot-booker"><strong>'+booking.firstName+" "+booking.lastName+"</strong> · Unit "+booking.unit+" (Phase "+booking.phase+")<br>"+t("with")+" "+booking.companions+"</div>";
+      statusHtml='<span class="slot-status taken">&#9679; '+t("statusBooked")+'</span>';
+      extraHtml='<div class="slot-booker"><strong>'+booking.firstName+" "+booking.lastName+"</strong> &middot; Unit "+booking.unit+" (Phase "+booking.phase+")<br>"+t("with")+" "+booking.companions+"</div>";
     }else if(inPast){
-      statusHtml='<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">● '+t("statusPast")+'</span>';
+      statusHtml='<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">&#9679; '+t("statusPast")+'</span>';
     }else if(!canBook){
-      statusHtml='<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">● '+t("statusNotOpen")+'</span>';
+      statusHtml='<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">&#9679; '+t("statusNotOpen")+'</span>';
     }else{
-      statusHtml='<span class="slot-status free">● '+t("statusFree")+'</span>';
+      statusHtml='<span class="slot-status free">&#9679; '+t("statusFree")+'</span>';
     }
     card.innerHTML='<div class="slot-time">'+slot+"</div>"+statusHtml+extraHtml;
     if(!booking&&canBook)card.addEventListener("click",()=>openBookingModal(dateStr,slot));
@@ -472,11 +474,11 @@ async function loadMyReservations(){
   const lastName=document.getElementById("lookup-lastname").value.trim();
   const unit=document.getElementById("lookup-unit").value.trim();
   const container=document.getElementById("my-res-list");
-  if(!lastName||!unit){container.innerHTML='<div class="empty-state"><div class="icon">⚠️</div>'+t("lookupWarn")+'</div>';return;}
-  container.innerHTML='<div class="empty-state"><div class="icon">⏳</div>'+t("loading")+'</div>';
+  if(!lastName||!unit){container.innerHTML='<div class="empty-state"><div class="icon">&#9888;&#65039;</div>'+t("lookupWarn")+'</div>';return;}
+  container.innerHTML='<div class="empty-state"><div class="icon">&#9203;</div>'+t("loading")+'</div>';
   const res=await fetch("/api/my-reservations?lastName="+encodeURIComponent(lastName)+"&unit="+encodeURIComponent(unit));
   const reservations=await res.json();
-  if(!Array.isArray(reservations)||reservations.length===0){container.innerHTML='<div class="empty-state"><div class="icon">📭</div>'+t("noRes",lastName,unit)+'</div>';return;}
+  if(!Array.isArray(reservations)||reservations.length===0){container.innerHTML='<div class="empty-state"><div class="icon">&#128205;</div>'+t("noRes",lastName,unit)+'</div>';return;}
   const upcoming=reservations.filter(r=>!isSlotInPast(r.date,r.slot));
   const past=reservations.filter(r=>isSlotInPast(r.date,r.slot));
   let html="";
