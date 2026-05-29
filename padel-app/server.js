@@ -183,6 +183,24 @@ app.post("/api/reservations", (req, res) => {
   res.json({ id: entry.id });
 });
 
+// ── PATCH edit reservation ───────────────────────────────────────────────────
+app.patch("/api/reservations/:id", (req, res) => {
+  const { id } = req.params;
+  const { lastName, unit, firstName, phase, companions } = req.body;
+  if (!lastName || !unit) return res.status(400).json({ error: "Last name and unit required." });
+  const db = readDB();
+  const idx = db.findIndex(r => r.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Reservation not found." });
+  const row = db[idx];
+  if (row.lastName.toLowerCase() !== lastName.toLowerCase() || row.unit.toLowerCase() !== unit.toLowerCase())
+    return res.status(403).json({ error: "Only the person who booked can edit this reservation." });
+  if (firstName)  db[idx].firstName  = firstName;
+  if (phase)      db[idx].phase      = phase;
+  if (companions) db[idx].companions = companions;
+  writeDB(db);
+  res.json({ ok: true });
+});
+
 // ── DELETE cancel reservation ────────────────────────────────────────────────
 app.delete("/api/reservations/:id", (req, res) => {
   const { id } = req.params;
