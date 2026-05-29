@@ -30,13 +30,18 @@ if (!fs.existsSync(DB_FILE)) writeDB([]);
 // Code renouvellé automatiquement chaque 1er du mois.
 // SECRET_BASE (défini dans Railway Variables) + MMYYYY → ex: SAVIA062026
 const SECRET_BASE  = process.env.SECRET_BASE  || "SAVIA";
-const ADMIN_KEY    = process.env.ADMIN_KEY     || "admin123"; // pour voir le code du mois
+const SECRET_PIN   = process.env.SECRET_PIN   || "47";   // chiffres fixes insérés dans le code
+const ADMIN_KEY    = process.env.ADMIN_KEY     || "admin123";
 
 function getMonthlyCode() {
-  const now = new Date();
-  const mm  = String(now.getMonth() + 1).padStart(2, "0");
+  const now  = new Date();
+  const mm   = String(now.getMonth() + 1).padStart(2, "0");
   const yyyy = now.getFullYear();
-  return (SECRET_BASE + mm + yyyy).toUpperCase();
+  // Hash du PIN + mois + année → 2 chiffres imprévisibles (10-99)
+  const hash = crypto.createHash("md5").update(SECRET_PIN + mm + yyyy).digest("hex");
+  const twoDigits = String(parseInt(hash.slice(0, 4), 16) % 90 + 10);
+  return (SECRET_BASE + twoDigits).toUpperCase();
+  // ex: SAVIA14 en juin, SAVIA31 en juillet, etc.
 }
 
 const SLOTS = [
