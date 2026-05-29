@@ -169,8 +169,7 @@ app.post("/api/reservations", (req, res) => {
   // Weekly limit
   const { monStr, sunStr } = getWeekBounds(date);
   const weekCount = db.filter(
-    r => r.lastName.toLowerCase() === lastName.toLowerCase() &&
-         r.unit.toLowerCase() === unit.toLowerCase() &&
+    r => r.unit.toLowerCase() === unit.toLowerCase() &&
          r.date >= monStr && r.date <= sunStr
   ).length;
 
