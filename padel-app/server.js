@@ -100,12 +100,20 @@ app.post("/api/auth", (req, res) => {
 // ── Admin : voir le code du mois (protégé par ADMIN_KEY) ─────────────────────
 app.get("/api/admin/code", (req, res) => {
   if (req.query.key !== ADMIN_KEY) return res.status(403).json({ error: "Forbidden." });
-  const now = new Date();
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  res.json({
-    code: getMonthlyCode(),
-    month: months[now.getMonth()] + " " + now.getFullYear(),
-  });
+  const now = new Date();
+
+  const codes = [];
+  for (let i = 0; i < 6; i++) {
+    const d    = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const mm   = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const hash = crypto.createHash("md5").update(SECRET_PIN + mm + yyyy).digest("hex");
+    const code = (SECRET_BASE + String(parseInt(hash.slice(0,4), 16) % 90 + 10)).toUpperCase();
+    codes.push({ month: months[d.getMonth()] + " " + yyyy, code });
+  }
+
+  res.json(codes);
 });
 
 // ── GET reservations for a date ──────────────────────────────────────────────
