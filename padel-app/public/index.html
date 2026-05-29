@@ -208,6 +208,39 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="edit-overlay">
+  <div class="modal">
+    <h2 id="edit-title"></h2>
+    <div class="modal-subtitle" id="edit-subtitle"></div>
+    <p id="edit-verify-desc" style="font-size:14px;color:#6b7280;margin-bottom:16px;"></p>
+    <div class="form-row">
+      <div class="form-group"><label id="edit-lbl-lastname"></label><input type="text" id="e-lastname" /></div>
+      <div class="form-group"><label id="edit-lbl-unit"></label><input type="text" id="e-unit" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label id="edit-lbl-firstname"></label><input type="text" id="e-firstname" /></div>
+      <div class="form-group">
+        <label id="edit-lbl-phase"></label>
+        <select id="e-phase">
+          <option value="1">Phase 1</option>
+          <option value="2">Phase 2</option>
+          <option value="3">Phase 3</option>
+          <option value="4">Phase 4</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label id="edit-lbl-companions"></label>
+      <textarea id="e-companions" rows="2"></textarea>
+    </div>
+    <div class="form-error" id="edit-error"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="btn-edit-cancel" onclick="closeEditModal()"></button>
+      <button class="btn-primary" id="edit-confirm-btn" onclick="confirmEdit()"></button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="cancel-overlay">
   <div class="modal">
     <h2 id="cancel-title"></h2>
@@ -251,6 +284,7 @@ const T={
     lblCompanions:"Companion name(s) *",
     companionsHint:"Required - list all players joining you.",
     companionsPh:"e.g. Juan Garcia, Sofia Lopez",firstnamePh:"e.g. Maria",lastnamePh2:"e.g. Garcia",
+    editBtn:"Edit",editTitle:"Edit reservation",editVerifyDesc:"Verify your identity, then update the fields you want to change.",editSave:"Save changes",editOk:"Reservation updated!",
     modalCancel:"Cancel",confirmBtn:"Confirm booking",bookingOk:"Booking confirmed!",
     allRequired:"All fields are required. Please fill in every field before confirming.",
     netError:"Network error. Please try again.",cancelTitle:"Cancel reservation",
@@ -284,6 +318,7 @@ const T={
     lblCompanions:"Nombre(s) de acompanante(s) *",
     companionsHint:"Obligatorio - indica todos los jugadores que te acompanan.",
     companionsPh:"ej. Juan Garcia, Sofia Lopez",firstnamePh:"ej. Maria",lastnamePh2:"ej. Garcia",
+    editBtn:"Editar",editTitle:"Editar reserva",editVerifyDesc:"Verifica tu identidad y luego cambia los campos que quieras modificar.",editSave:"Guardar cambios",editOk:"Reserva actualizada!",
     modalCancel:"Cancelar",confirmBtn:"Confirmar reserva",bookingOk:"Reserva confirmada!",
     allRequired:"Todos los campos son obligatorios. Por favor rellena todo antes de confirmar.",
     netError:"Error de red. Intentalo de nuevo.",cancelTitle:"Cancelar reserva",
@@ -341,16 +376,25 @@ function applyTranslations(){
   document.getElementById("c-unit").placeholder=t("yourUnit");
   document.getElementById("btn-cancel-back").textContent=t("cancelBack");
   document.getElementById("cancel-confirm-btn").textContent=t("cancelConfirm");
+  document.getElementById("edit-title").textContent=t("editTitle");
+  document.getElementById("edit-verify-desc").textContent=t("editVerifyDesc");
+  document.getElementById("edit-lbl-lastname").textContent=t("lblLastname");
+  document.getElementById("edit-lbl-unit").textContent=t("lblUnit");
+  document.getElementById("edit-lbl-firstname").textContent=t("lblFirstname");
+  document.getElementById("edit-lbl-phase").textContent=t("lblPhase");
+  document.getElementById("edit-lbl-companions").textContent=t("lblCompanions");
+  document.getElementById("btn-edit-cancel").textContent=t("modalCancel");
+  document.getElementById("edit-confirm-btn").textContent=t("editSave");
 }
 applyTranslations();
 
-let currentDate=new Date(); currentDate.setHours(0,0,0,0);
-let pendingSlot=null, pendingCancelId=null;
+let currentDate=new Date();currentDate.setHours(0,0,0,0);
+let pendingSlot=null,pendingCancelId=null,pendingEditId=null;
 
 async function checkPasscode(){
   const code=document.getElementById("passcode-input").value.trim();
   const btn=document.getElementById("lock-btn");
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
   try{
     const res=await fetch("/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code})});
     if(res.ok){sessionStorage.setItem("auth","1");document.getElementById("lock-screen").style.display="none";document.getElementById("app").style.display="block";renderSlots();}
@@ -483,12 +527,45 @@ async function loadMyReservations(){
   const past=reservations.filter(r=>isSlotInPast(r.date,r.slot));
   let html="";
   if(upcoming.length>0){
-    html+='<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">'+t("upcoming")+'</h3><div class="res-list">'+upcoming.map(r=>'<div class="res-item"><div class="res-item-info"><div class="res-date">'+formatDateDisplay(r.date)+'</div><div class="res-slot">'+r.slot+'</div><div class="res-companions">'+t("with")+" "+r.companions+'</div></div><button class="btn-cancel" onclick="openCancelModal(\''+r.id+'\',\''+r.date+'\',\''+r.slot+'\')">'+t("cancel")+'</button></div>').join("")+"</div>";
+    html+='<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">'+t("upcoming")+'</h3><div class="res-list">'+upcoming.map(r=>'<div class="res-item"><div class="res-item-info"><div class="res-date">'+formatDateDisplay(r.date)+'</div><div class="res-slot">'+r.slot+'</div><div class="res-companions">'+t("with")+" "+r.companions+'</div></div><div style="display:flex;gap:8px;flex-shrink:0;"><button class="btn-cancel" style="border-color:var(--green);color:var(--green);" onclick="openEditModal(\''+r.id+'\',\''+r.date+'\',\''+r.slot+'\',\''+encodeURIComponent(r.firstName)+'\',\''+encodeURIComponent(r.phase)+'\',\''+encodeURIComponent(r.companions)+'\')">'+t("editBtn")+'</button><button class="btn-cancel" onclick="openCancelModal(\''+r.id+'\',\''+r.date+'\',\''+r.slot+'\')">'+t("cancel")+'</button></div></div>').join("")+"</div>";
   }
   if(past.length>0){
     html+='<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:24px 0 12px;">'+t("past")+'</h3><div class="res-list">'+past.map(r=>'<div class="res-item" style="opacity:.55;"><div class="res-item-info"><div class="res-date">'+formatDateDisplay(r.date)+'</div><div class="res-slot">'+r.slot+'</div><div class="res-companions">'+t("with")+" "+r.companions+'</div></div><span style="font-size:12px;color:#9ca3af;">'+t("past")+'</span></div>').join("")+"</div>";
   }
   container.innerHTML=html;
+}
+
+function openEditModal(id,date,slot,firstName,phase,companions){
+  pendingEditId=id;
+  document.getElementById("edit-subtitle").textContent=formatDateDisplay(date)+" - "+slot;
+  document.getElementById("e-lastname").value="";
+  document.getElementById("e-unit").value="";
+  document.getElementById("e-firstname").value=decodeURIComponent(firstName);
+  document.getElementById("e-phase").value=decodeURIComponent(phase);
+  document.getElementById("e-companions").value=decodeURIComponent(companions);
+  document.getElementById("edit-error").style.display="none";
+  document.getElementById("edit-overlay").classList.add("open");
+}
+function closeEditModal(){document.getElementById("edit-overlay").classList.remove("open");pendingEditId=null;}
+
+async function confirmEdit(){
+  const lastName=document.getElementById("e-lastname").value.trim();
+  const unit=document.getElementById("e-unit").value.trim();
+  const firstName=document.getElementById("e-firstname").value.trim();
+  const phase=document.getElementById("e-phase").value;
+  const companions=document.getElementById("e-companions").value.trim();
+  const errEl=document.getElementById("edit-error");
+  if(!lastName||!unit){errEl.textContent=t("lookupWarn");errEl.style.display="block";return;}
+  if(!companions){errEl.textContent=t("allRequired");errEl.style.display="block";return;}
+  const btn=document.getElementById("edit-confirm-btn");
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> '+t("editSave");
+  try{
+    const res=await fetch("/api/reservations/"+pendingEditId,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({lastName,unit,firstName,phase,companions})});
+    const data=await res.json();
+    if(!res.ok){errEl.textContent=data.error;errEl.style.display="block";return;}
+    closeEditModal();await loadMyReservations();showToast(t("editOk"),"success");
+  }catch{errEl.textContent=t("netError");errEl.style.display="block";}
+  finally{btn.disabled=false;btn.textContent=t("editSave");}
 }
 
 function openCancelModal(id,date,slot){
@@ -525,6 +602,7 @@ function showToast(msg,type=""){
 
 document.getElementById("modal-overlay").addEventListener("click",e=>{if(e.target.id==="modal-overlay")closeModal();});
 document.getElementById("cancel-overlay").addEventListener("click",e=>{if(e.target.id==="cancel-overlay")closeCancelModal();});
+document.getElementById("edit-overlay").addEventListener("click",e=>{if(e.target.id==="edit-overlay")closeEditModal();});
 if(sessionStorage.getItem("auth")==="1")renderSlots();
 </script>
 </body>
