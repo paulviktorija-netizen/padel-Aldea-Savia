@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// On Railway, store data in /data (persistent volume). Fallback to local.
+// On Railway, /tmp is always writable. Use DATA_DIR env var for a persistent volume.
 const DATA_DIR = process.env.DATA_DIR || "/tmp";
 const DB_FILE = path.join(DATA_DIR, "reservations.json");
 
@@ -27,7 +27,17 @@ function writeDB(data) {
 if (!fs.existsSync(DB_FILE)) writeDB([]);
 
 // ── Config ───────────────────────────────────────────────────────────────────
-const ACCESS_CODE = process.env.ACCESS_CODE || "ALDEАСAVIA3";
+// Code renouvellé automatiquement chaque 1er du mois.
+// SECRET_BASE (défini dans Railway Variables) + MMYYYY → ex: SAVIA062026
+const SECRET_BASE  = process.env.SECRET_BASE  || "SAVIA";
+const ADMIN_KEY    = process.env.ADMIN_KEY     || "admin123"; // pour voir le code du mois
+
+function getMonthlyCode() {
+  const now = new Date();
+  const mm  = String(now.getMonth() + 1).padStart(2, "0");
+  const yyyy = now.getFullYear();
+  return (SECRET_BASE + mm + yyyy).toUpperCase();
+}
 
 const SLOTS = [
   "09:00 – 10:30",
@@ -74,8 +84,19 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 app.post("/api/auth", (req, res) => {
-  if (req.body.code === ACCESS_CODE) return res.json({ ok: true });
+  if (req.body.code === getMonthlyCode()) return res.json({ ok: true });
   res.status(401).json({ error: "Invalid access code." });
+});
+
+// ── Admin : voir le code du mois (protégé par ADMIN_KEY) ─────────────────────
+app.get("/api/admin/code", (req, res) => {
+  if (req.query.key !== ADMIN_KEY) return res.status(403).json({ error: "Forbidden." });
+  const now = new Date();
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  res.json({
+    code: getMonthlyCode(),
+    month: months[now.getMonth()] + " " + now.getFullYear(),
+  });
 });
 
 // ── GET reservations for a date ──────────────────────────────────────────────
