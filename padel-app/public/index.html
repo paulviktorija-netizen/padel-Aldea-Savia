@@ -6,255 +6,99 @@
   <title>Padel Court — Aldea Savia</title>
   <style>
     :root {
-      --green: #2e7d4f;
-      --green-light: #e8f5ee;
-      --green-mid: #4caf78;
-      --red: #c0392b;
-      --red-light: #fdf0ee;
-      --gray: #6b7280;
-      --gray-light: #f3f4f6;
-      --border: #d1d5db;
-      --text: #111827;
-      --white: #ffffff;
+      --green: #2e7d4f; --green-light: #e8f5ee; --green-mid: #4caf78;
+      --red: #c0392b; --red-light: #fdf0ee;
+      --gray: #6b7280; --gray-light: #f3f4f6; --border: #d1d5db;
+      --text: #111827; --white: #ffffff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f0f4f8;
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── LOCK ── */
-    #lock-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px;
-      background: linear-gradient(135deg, #1a4731 0%, #2e7d4f 60%, #4caf78 100%);
-    }
-    #lock-screen .card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 40px 36px;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
-      text-align: center;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: var(--text); min-height: 100vh; }
+    .lang-toggle { display: flex; align-items: center; gap: 6px; }
+    .lang-btn { background: none; border: 2px solid transparent; border-radius: 6px; font-size: 20px; cursor: pointer; padding: 2px 4px; line-height: 1; transition: border-color .2s, opacity .2s; opacity: .45; }
+    .lang-btn.active { border-color: rgba(255,255,255,.6); opacity: 1; }
+    .lang-toggle.lock { position: absolute; top: 20px; right: 20px; }
+    .lang-toggle.lock .lang-btn { opacity: .55; }
+    .lang-toggle.lock .lang-btn.active { border-color: rgba(255,255,255,.7); opacity: 1; }
+    #lock-screen { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; background: linear-gradient(135deg, #1a4731 0%, #2e7d4f 60%, #4caf78 100%); }
+    #lock-screen .card { background: var(--white); border-radius: 16px; padding: 40px 36px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.25); text-align: center; }
     #lock-screen .logo { font-size: 48px; margin-bottom: 12px; }
     #lock-screen h1 { font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
     #lock-screen .subtitle { font-size: 13px; color: var(--gray); margin-bottom: 28px; }
-    #lock-screen input {
-      width: 100%; padding: 12px 16px;
-      border: 2px solid var(--border); border-radius: 8px;
-      font-size: 16px; letter-spacing: 3px; text-align: center;
-      margin-bottom: 12px; outline: none; transition: border-color .2s;
-    }
+    #lock-screen input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; letter-spacing: 3px; text-align: center; margin-bottom: 12px; outline: none; transition: border-color .2s; }
     #lock-screen input:focus { border-color: var(--green); }
     #lock-screen .error { color: var(--red); font-size: 13px; margin-bottom: 10px; min-height: 18px; }
-    #lock-screen button {
-      width: 100%; padding: 13px;
-      background: var(--green); color: var(--white);
-      border: none; border-radius: 8px;
-      font-size: 15px; font-weight: 600; cursor: pointer; transition: background .2s;
-    }
-    #lock-screen button:hover { background: #256942; }
+    #lock-screen button.main-btn { width: 100%; padding: 13px; background: var(--green); color: var(--white); border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    #lock-screen button.main-btn:hover { background: #256942; }
     #lock-screen .hint { margin-top: 20px; font-size: 12px; color: var(--gray); }
-
-    /* ── APP ── */
     #app { display: none; }
-
-    header {
-      background: linear-gradient(135deg, #1a4731, #2e7d4f);
-      color: var(--white);
-      padding: 0 24px;
-    }
-    .header-inner {
-      max-width: 900px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 0;
-    }
+    header { background: linear-gradient(135deg, #1a4731, #2e7d4f); color: var(--white); padding: 0 24px; }
+    .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
     .header-left h1 { font-size: 20px; font-weight: 700; }
     .header-left p { font-size: 12px; opacity: .75; margin-top: 2px; }
-    .btn-logout {
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.3);
-      color: var(--white); padding: 7px 14px;
-      border-radius: 7px; font-size: 13px; cursor: pointer;
-    }
+    .header-right { display: flex; align-items: center; gap: 14px; }
+    .btn-logout { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: var(--white); padding: 7px 14px; border-radius: 7px; font-size: 13px; cursor: pointer; }
     .btn-logout:hover { background: rgba(255,255,255,.25); }
-
-    .tabs-bar {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 10;
-    }
+    .tabs-bar { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
     .tabs-inner { max-width: 900px; margin: 0 auto; display: flex; }
-    .tab-btn {
-      padding: 14px 24px; background: none;
-      border: none; border-bottom: 3px solid transparent;
-      font-size: 14px; font-weight: 600; color: var(--gray); cursor: pointer;
-    }
+    .tab-btn { padding: 14px 24px; background: none; border: none; border-bottom: 3px solid transparent; font-size: 14px; font-weight: 600; color: var(--gray); cursor: pointer; }
     .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
-
     .main { max-width: 900px; margin: 0 auto; padding: 28px 24px; }
-
-    .date-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px; background: var(--white);
-      border-radius: 12px; padding: 14px 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-    }
-    .date-nav button {
-      background: var(--gray-light); border: none;
-      width: 36px; height: 36px; border-radius: 8px;
-      font-size: 18px; cursor: pointer; color: var(--text);
-      display: flex; align-items: center; justify-content: center;
-    }
+    .date-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; background: var(--white); border-radius: 12px; padding: 14px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .date-nav button { background: var(--gray-light); border: none; width: 36px; height: 36px; border-radius: 8px; font-size: 18px; cursor: pointer; color: var(--text); display: flex; align-items: center; justify-content: center; }
     .date-nav button:disabled { opacity: .35; cursor: default; }
     .date-label { text-align: center; }
     .date-label .day-name { font-size: 13px; color: var(--gray); }
     .date-label .day-date { font-size: 18px; font-weight: 700; }
-
-    .slots-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
-    }
-    .slot-card {
-      background: var(--white); border: 2px solid var(--border);
-      border-radius: 12px; padding: 18px 20px; transition: all .2s;
-    }
+    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .slot-card { background: var(--white); border: 2px solid var(--border); border-radius: 12px; padding: 18px 20px; transition: all .2s; }
     .slot-card.available { cursor: pointer; border-color: var(--green-mid); }
-    .slot-card.available:hover {
-      background: var(--green-light); transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(46,125,79,.15);
-    }
+    .slot-card.available:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(46,125,79,.15); }
     .slot-card.booked { background: #fef9f9; border-color: #f5c6c2; }
     .slot-time { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-    .slot-status {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; font-weight: 600;
-      padding: 3px 10px; border-radius: 20px;
-    }
+    .slot-status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
     .slot-status.free { background: var(--green-light); color: var(--green); }
     .slot-status.taken { background: #fde8e8; color: var(--red); }
     .slot-booker { margin-top: 8px; font-size: 12px; color: var(--gray); }
     .slot-booker strong { color: var(--text); }
-
-    .my-res-lookup {
-      background: var(--white); border-radius: 12px;
-      padding: 24px; margin-bottom: 24px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-    }
-    .lookup-row {
-      display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;
-    }
-    .lookup-row input {
-      padding: 10px 14px; border: 2px solid var(--border);
-      border-radius: 8px; font-size: 14px; outline: none;
-    }
+    .my-res-lookup { background: var(--white); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .lookup-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; }
+    .lookup-row input { padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
     .lookup-row input:focus { border-color: var(--green); }
-    .lookup-row button {
-      padding: 10px 18px; background: var(--green);
-      color: var(--white); border: none; border-radius: 8px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-    }
-
+    .lookup-row button { padding: 10px 18px; background: var(--green); color: var(--white); border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .res-list { display: flex; flex-direction: column; gap: 12px; }
-    .res-item {
-      background: var(--white); border-radius: 12px;
-      padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
-      display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    }
+    .res-item { background: var(--white); border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
     .res-item-info .res-date { font-size: 13px; color: var(--gray); margin-bottom: 2px; }
     .res-item-info .res-slot { font-size: 16px; font-weight: 700; }
     .res-item-info .res-companions { font-size: 12px; color: var(--gray); margin-top: 4px; }
-    .btn-cancel {
-      padding: 8px 16px; background: var(--white); color: var(--red);
-      border: 2px solid var(--red); border-radius: 8px;
-      font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
-      flex-shrink: 0; transition: background .2s;
-    }
+    .btn-cancel { padding: 8px 16px; background: var(--white); color: var(--red); border: 2px solid var(--red); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background .2s; }
     .btn-cancel:hover { background: var(--red-light); }
     .empty-state { text-align: center; padding: 48px 24px; color: var(--gray); }
     .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.45); z-index: 100;
-      align-items: center; justify-content: center; padding: 24px;
-    }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--white); border-radius: 16px; padding: 32px;
-      max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
-      box-shadow: 0 25px 80px rgba(0,0,0,.25);
-    }
+    .modal { background: var(--white); border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 80px rgba(0,0,0,.25); }
     .modal h2 { font-size: 20px; margin-bottom: 6px; }
     .modal .modal-subtitle { font-size: 13px; color: var(--gray); margin-bottom: 24px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
     .form-group { display: flex; flex-direction: column; margin-bottom: 14px; }
-    .form-group label {
-      font-size: 12px; font-weight: 600; color: var(--gray);
-      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px;
-    }
-    .form-group input, .form-group select, .form-group textarea {
-      padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px;
-      font-size: 14px; font-family: inherit; outline: none; resize: vertical;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: var(--green);
-    }
-    .form-error {
-      color: var(--red); font-size: 13px; margin-top: 16px;
-      padding: 10px 14px; background: var(--red-light); border-radius: 8px; display: none;
-    }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea { padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; resize: vertical; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--green); }
+    .form-error { color: var(--red); font-size: 13px; margin-top: 16px; padding: 10px 14px; background: var(--red-light); border-radius: 8px; display: none; }
     .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-    .btn-primary {
-      flex: 1; padding: 13px; background: var(--green); color: var(--white);
-      border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer;
-    }
+    .btn-primary { flex: 1; padding: 13px; background: var(--green); color: var(--white); border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
     .btn-primary:hover { background: #256942; }
     .btn-primary:disabled { opacity: .6; cursor: default; }
-    .btn-secondary {
-      flex: 1; padding: 13px; background: var(--gray-light); color: var(--text);
-      border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer;
-    }
+    .btn-secondary { flex: 1; padding: 13px; background: var(--gray-light); color: var(--text); border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
     .btn-secondary:hover { background: var(--border); }
-
-    #toast {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: var(--text); color: var(--white);
-      padding: 12px 22px; border-radius: 10px;
-      font-size: 14px; font-weight: 500; z-index: 999;
-      transition: transform .3s ease; white-space: nowrap;
-      max-width: calc(100vw - 48px); text-align: center;
-    }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: var(--white); padding: 12px 22px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 999; transition: transform .3s ease; white-space: nowrap; max-width: calc(100vw - 48px); text-align: center; }
     #toast.show { transform: translateX(-50%) translateY(0); }
     #toast.success { background: var(--green); }
     #toast.error { background: var(--red); }
-
-    .info-box {
-      background: var(--green-light); border: 1px solid #b2d8c3;
-      border-radius: 10px; padding: 14px 16px; font-size: 13px;
-      color: #1a4731; margin-bottom: 20px;
-      display: flex; align-items: flex-start; gap: 10px;
-    }
+    .info-box { background: var(--green-light); border: 1px solid #b2d8c3; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1a4731; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; }
     .info-box .icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
-
-    .spinner {
-      display: inline-block; width: 18px; height: 18px;
-      border: 2px solid rgba(255,255,255,.4);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin .7s linear infinite; vertical-align: middle;
-    }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     @media (max-width: 600px) {
       .form-row { grid-template-columns: 1fr; }
       .lookup-row { grid-template-columns: 1fr; }
@@ -265,49 +109,47 @@
 </head>
 <body>
 
-<!-- LOCK SCREEN -->
 <div id="lock-screen">
+  <div class="lang-toggle lock">
+    <button class="lang-btn active" id="lock-lang-en" onclick="setLang('en')" title="English">🇬🇧</button>
+    <button class="lang-btn" id="lock-lang-es" onclick="setLang('es')" title="Espanol">🇪🇸</button>
+  </div>
   <div class="card">
     <div class="logo">🎾</div>
     <h1>Padel Court</h1>
     <div class="subtitle">Aldea Savia · Tulum · Phase 3</div>
-    <p style="font-size:13px;color:#6b7280;margin-bottom:20px;">
-      Residents only — enter the access code to continue.
-    </p>
-    <input type="password" id="passcode-input" placeholder="Access code" autocomplete="off" />
+    <p id="lock-desc" style="font-size:13px;color:#6b7280;margin-bottom:20px;"></p>
+    <input type="password" id="passcode-input" autocomplete="off" />
     <div class="error" id="lock-error"></div>
-    <button id="lock-btn" onclick="checkPasscode()">Enter</button>
-    <p class="hint">Contact your building management for the access code.</p>
+    <button class="main-btn" id="lock-btn" onclick="checkPasscode()"></button>
+    <p class="hint" id="lock-hint"></p>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <header>
     <div class="header-inner">
       <div class="header-left">
         <h1>🎾 Padel Court — Aldea Savia</h1>
-        <p>Phase 3 · Tulum · Residents only</p>
+        <p id="header-sub"></p>
       </div>
-      <button class="btn-logout" onclick="logout()">Logout</button>
+      <div class="header-right">
+        <div class="lang-toggle">
+          <button class="lang-btn active" id="app-lang-en" onclick="setLang('en')" title="English">🇬🇧</button>
+          <button class="lang-btn" id="app-lang-es" onclick="setLang('es')" title="Espanol">🇪🇸</button>
+        </div>
+        <button class="btn-logout" id="btn-logout" onclick="logout()"></button>
+      </div>
     </div>
   </header>
-
   <div class="tabs-bar">
     <div class="tabs-inner">
-      <button class="tab-btn active" id="tab-book" onclick="switchTab('book')">📅 Book a slot</button>
-      <button class="tab-btn" id="tab-my" onclick="switchTab('my')">🗂 My reservations</button>
+      <button class="tab-btn active" id="tab-book" onclick="switchTab('book')"></button>
+      <button class="tab-btn" id="tab-my" onclick="switchTab('my')"></button>
     </div>
   </div>
-
-  <!-- BOOKING TAB -->
   <div id="panel-book" class="main">
-    <div class="info-box">
-      <span class="icon">ℹ️</span>
-      <span>Slots can be booked up to <strong>24 hours in advance</strong>.
-            Each resident may book <strong>maximum 2 slots per week</strong> (Monday–Sunday).
-            Only the person who booked a slot can cancel it.</span>
-    </div>
+    <div class="info-box"><span class="icon">ℹ️</span><span id="info-text"></span></div>
     <div class="date-nav">
       <button id="btn-prev" onclick="changeDay(-1)">‹</button>
       <div class="date-label">
@@ -316,52 +158,36 @@
       </div>
       <button id="btn-next" onclick="changeDay(1)">›</button>
     </div>
-    <div class="slots-grid" id="slots-grid">
-      <div class="empty-state"><div class="icon">⏳</div>Loading…</div>
-    </div>
+    <div class="slots-grid" id="slots-grid"></div>
   </div>
-
-  <!-- MY RESERVATIONS TAB -->
   <div id="panel-my" class="main" style="display:none;">
     <div class="my-res-lookup">
-      <h3 style="font-size:16px;margin-bottom:10px;">View my reservations</h3>
-      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;">
-        Enter your last name and unit number to see and manage your bookings.
-      </p>
+      <h3 id="my-title" style="font-size:16px;margin-bottom:10px;"></h3>
+      <p id="my-desc" style="font-size:13px;color:#6b7280;margin-bottom:14px;"></p>
       <div class="lookup-row">
-        <input type="text" id="lookup-lastname" placeholder="Last name" />
-        <input type="text" id="lookup-unit" placeholder="Unit number" />
-        <button onclick="loadMyReservations()">Search</button>
+        <input type="text" id="lookup-lastname" />
+        <input type="text" id="lookup-unit" />
+        <button id="btn-search" onclick="loadMyReservations()"></button>
       </div>
     </div>
     <div id="my-res-list"></div>
   </div>
 </div>
 
-<!-- BOOKING MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <h2>Book a slot</h2>
+    <h2 id="modal-title"></h2>
     <div class="modal-subtitle" id="modal-subtitle"></div>
     <div class="form-row">
-      <div class="form-group">
-        <label>First name *</label>
-        <input type="text" id="f-firstname" placeholder="e.g. Maria" />
-      </div>
-      <div class="form-group">
-        <label>Last name *</label>
-        <input type="text" id="f-lastname" placeholder="e.g. Garcia" />
-      </div>
+      <div class="form-group"><label id="lbl-firstname"></label><input type="text" id="f-firstname" /></div>
+      <div class="form-group"><label id="lbl-lastname"></label><input type="text" id="f-lastname" /></div>
     </div>
     <div class="form-row">
+      <div class="form-group"><label id="lbl-unit"></label><input type="text" id="f-unit" placeholder="e.g. 342" /></div>
       <div class="form-group">
-        <label>Unit number *</label>
-        <input type="text" id="f-unit" placeholder="e.g. 342" />
-      </div>
-      <div class="form-group">
-        <label>Phase *</label>
+        <label id="lbl-phase"></label>
         <select id="f-phase">
-          <option value="">Select phase…</option>
+          <option value="" id="phase-placeholder"></option>
           <option value="1">Phase 1</option>
           <option value="2">Phase 2</option>
           <option value="3">Phase 3</option>
@@ -370,40 +196,31 @@
       </div>
     </div>
     <div class="form-group">
-      <label>Companion name(s) *</label>
-      <textarea id="f-companions" rows="2" placeholder="e.g. Juan Garcia, Sofia Lopez"></textarea>
-      <span style="font-size:11px;color:#9ca3af;margin-top:4px;">Required — list all players joining you.</span>
+      <label id="lbl-companions"></label>
+      <textarea id="f-companions" rows="2"></textarea>
+      <span id="companions-hint" style="font-size:11px;color:#9ca3af;margin-top:4px;"></span>
     </div>
     <div class="form-error" id="form-error"></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" id="confirm-btn" onclick="confirmBooking()">Confirm booking</button>
+      <button class="btn-secondary" id="btn-modal-cancel" onclick="closeModal()"></button>
+      <button class="btn-primary" id="confirm-btn" onclick="confirmBooking()"></button>
     </div>
   </div>
 </div>
 
-<!-- CANCEL MODAL -->
 <div class="modal-overlay" id="cancel-overlay">
   <div class="modal">
-    <h2>Cancel reservation</h2>
+    <h2 id="cancel-title"></h2>
     <div class="modal-subtitle" id="cancel-subtitle"></div>
-    <p style="font-size:14px;color:#6b7280;margin-bottom:20px;">
-      To confirm cancellation, verify your identity.
-    </p>
+    <p id="cancel-desc" style="font-size:14px;color:#6b7280;margin-bottom:20px;"></p>
     <div class="form-row">
-      <div class="form-group">
-        <label>Last name *</label>
-        <input type="text" id="c-lastname" placeholder="Your last name" />
-      </div>
-      <div class="form-group">
-        <label>Unit number *</label>
-        <input type="text" id="c-unit" placeholder="Your unit number" />
-      </div>
+      <div class="form-group"><label id="lbl-c-lastname"></label><input type="text" id="c-lastname" /></div>
+      <div class="form-group"><label id="lbl-c-unit"></label><input type="text" id="c-unit" /></div>
     </div>
     <div class="form-error" id="cancel-error"></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeCancelModal()">Back</button>
-      <button class="btn-primary" id="cancel-confirm-btn" style="background:var(--red);" onclick="confirmCancel()">Yes, cancel</button>
+      <button class="btn-secondary" id="btn-cancel-back" onclick="closeCancelModal()"></button>
+      <button class="btn-primary" id="cancel-confirm-btn" style="background:var(--red);" onclick="confirmCancel()"></button>
     </div>
   </div>
 </div>
@@ -411,375 +228,302 @@
 <div id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   STATE
-   ═══════════════════════════════════════════════════════ */
-let currentDate = new Date();
-currentDate.setHours(0, 0, 0, 0);
-let pendingSlot = null;
-let pendingCancelId = null;
-
-/* ═══════════════════════════════════════════════════════
-   AUTH
-   ═══════════════════════════════════════════════════════ */
-async function checkPasscode() {
-  const code = document.getElementById("passcode-input").value.trim();
-  const btn = document.getElementById("lock-btn");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
-  try {
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
-    if (res.ok) {
-      sessionStorage.setItem("auth", "1");
-      document.getElementById("lock-screen").style.display = "none";
-      document.getElementById("app").style.display = "block";
-      renderSlots();
-    } else {
-      document.getElementById("lock-error").textContent = "Incorrect access code. Please try again.";
-      document.getElementById("passcode-input").value = "";
-    }
-  } catch {
-    document.getElementById("lock-error").textContent = "Cannot reach server. Please try again.";
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "Enter";
+const T={
+  en:{
+    lockDesc:"Residents only - enter the access code to continue.",
+    lockPlaceholder:"Access code",lockBtn:"Enter",
+    lockHint:"Contact your building management for the access code.",
+    lockError:"Incorrect access code. Please try again.",
+    lockNetError:"Cannot reach server. Please try again.",
+    headerSub:"Phase 3 - Tulum - Residents only",logout:"Logout",
+    tabBook:"📅 Book a slot",tabMy:"🗂 My reservations",
+    infoText:"Slots can be booked up to <strong>24 hours in advance</strong>. Each resident may book <strong>maximum 2 slots per week</strong> (Monday-Sunday). Only the person who booked a slot can cancel it.",
+    loading:"Loading...",loadError:"Could not load slots. Please refresh.",
+    statusBooked:"Booked",statusPast:"Past",statusNotOpen:"Not yet open",statusFree:"Available",
+    with:"With:",myTitle:"View my reservations",
+    myDesc:"Enter your last name and unit number to see and manage your bookings.",
+    lastnamePh:"Last name",unitPh:"Unit number",search:"Search",
+    upcoming:"Upcoming",past:"Past",cancel:"Cancel",
+    noRes:(ln,u)=>"No reservations found for <strong>"+ln+"</strong> - Unit "+u+".",
+    lookupWarn:"Please enter your last name and unit number.",
+    modalTitle:"Book a slot",lblFirstname:"First name *",lblLastname:"Last name *",
+    lblUnit:"Unit number *",lblPhase:"Phase *",phasePh:"Select phase...",
+    lblCompanions:"Companion name(s) *",
+    companionsHint:"Required - list all players joining you.",
+    companionsPh:"e.g. Juan Garcia, Sofia Lopez",firstnamePh:"e.g. Maria",lastnamePh2:"e.g. Garcia",
+    modalCancel:"Cancel",confirmBtn:"Confirm booking",bookingOk:"Booking confirmed! 🎾",
+    allRequired:"All fields are required. Please fill in every field before confirming.",
+    netError:"Network error. Please try again.",cancelTitle:"Cancel reservation",
+    cancelDesc:"To confirm cancellation, verify your identity.",
+    cancelBack:"Back",cancelConfirm:"Yes, cancel",cancelOk:"Reservation cancelled.",
+    yourLastname:"Your last name",yourUnit:"Your unit number",today:"Today",
+    dayNames:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    dayNamesShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+    monthNames:["January","February","March","April","May","June","July","August","September","October","November","December"],
+    monthNamesShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  },
+  es:{
+    lockDesc:"Solo residentes - introduce el codigo de acceso para continuar.",
+    lockPlaceholder:"Codigo de acceso",lockBtn:"Entrar",
+    lockHint:"Contacta con la administracion del edificio para obtener el codigo.",
+    lockError:"Codigo de acceso incorrecto. Intentalo de nuevo.",
+    lockNetError:"No se puede conectar al servidor. Intentalo de nuevo.",
+    headerSub:"Fase 3 - Tulum - Solo residentes",logout:"Salir",
+    tabBook:"📅 Reservar",tabMy:"🗂 Mis reservas",
+    infoText:"Las pistas se pueden reservar con un maximo de <strong>24 horas de antelacion</strong>. Cada residente puede reservar <strong>maximo 2 veces por semana</strong> (lunes-domingo). Solo la persona que reservo puede cancelar.",
+    loading:"Cargando...",loadError:"No se pudieron cargar los horarios. Actualiza la pagina.",
+    statusBooked:"Reservado",statusPast:"Pasado",statusNotOpen:"No disponible aun",statusFree:"Disponible",
+    with:"Con:",myTitle:"Ver mis reservas",
+    myDesc:"Introduce tu apellido y numero de unidad para ver y gestionar tus reservas.",
+    lastnamePh:"Apellido",unitPh:"Numero de unidad",search:"Buscar",
+    upcoming:"Proximas",past:"Pasadas",cancel:"Cancelar",
+    noRes:(ln,u)=>"No se encontraron reservas para <strong>"+ln+"</strong> - Unidad "+u+".",
+    lookupWarn:"Por favor introduce tu apellido y numero de unidad.",
+    modalTitle:"Reservar horario",lblFirstname:"Nombre *",lblLastname:"Apellido *",
+    lblUnit:"Numero de unidad *",lblPhase:"Fase *",phasePh:"Selecciona la fase...",
+    lblCompanions:"Nombre(s) de acompanante(s) *",
+    companionsHint:"Obligatorio - indica todos los jugadores que te acompanan.",
+    companionsPh:"ej. Juan Garcia, Sofia Lopez",firstnamePh:"ej. Maria",lastnamePh2:"ej. Garcia",
+    modalCancel:"Cancelar",confirmBtn:"Confirmar reserva",bookingOk:"Reserva confirmada! 🎾",
+    allRequired:"Todos los campos son obligatorios. Por favor rellena todo antes de confirmar.",
+    netError:"Error de red. Intentalo de nuevo.",cancelTitle:"Cancelar reserva",
+    cancelDesc:"Para confirmar la cancelacion, verifica tu identidad.",
+    cancelBack:"Volver",cancelConfirm:"Si, cancelar",cancelOk:"Reserva cancelada.",
+    yourLastname:"Tu apellido",yourUnit:"Tu numero de unidad",today:"Hoy",
+    dayNames:["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"],
+    dayNamesShort:["Dom","Lun","Mar","Mie","Jue","Vie","Sab"],
+    monthNames:["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],
+    monthNamesShort:["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"],
   }
+};
+
+let lang=localStorage.getItem("lang")||"en";
+function setLang(l){lang=l;localStorage.setItem("lang",l);applyTranslations();if(sessionStorage.getItem("auth")==="1")renderSlots();}
+function t(key,...args){const v=T[lang][key];return typeof v==="function"?v(...args):v;}
+
+function applyTranslations(){
+  ["en","es"].forEach(l=>{
+    document.getElementById("lock-lang-"+l).classList.toggle("active",lang===l);
+    document.getElementById("app-lang-"+l).classList.toggle("active",lang===l);
+  });
+  document.getElementById("lock-desc").textContent=t("lockDesc");
+  document.getElementById("passcode-input").placeholder=t("lockPlaceholder");
+  document.getElementById("lock-btn").textContent=t("lockBtn");
+  document.getElementById("lock-hint").textContent=t("lockHint");
+  document.getElementById("header-sub").textContent=t("headerSub");
+  document.getElementById("btn-logout").textContent=t("logout");
+  document.getElementById("tab-book").textContent=t("tabBook");
+  document.getElementById("tab-my").textContent=t("tabMy");
+  document.getElementById("info-text").innerHTML=t("infoText");
+  document.getElementById("my-title").textContent=t("myTitle");
+  document.getElementById("my-desc").textContent=t("myDesc");
+  document.getElementById("lookup-lastname").placeholder=t("lastnamePh");
+  document.getElementById("lookup-unit").placeholder=t("unitPh");
+  document.getElementById("btn-search").textContent=t("search");
+  document.getElementById("modal-title").textContent=t("modalTitle");
+  document.getElementById("lbl-firstname").textContent=t("lblFirstname");
+  document.getElementById("lbl-lastname").textContent=t("lblLastname");
+  document.getElementById("lbl-unit").textContent=t("lblUnit");
+  document.getElementById("lbl-phase").textContent=t("lblPhase");
+  document.getElementById("phase-placeholder").textContent=t("phasePh");
+  document.getElementById("lbl-companions").textContent=t("lblCompanions");
+  document.getElementById("companions-hint").textContent=t("companionsHint");
+  document.getElementById("f-companions").placeholder=t("companionsPh");
+  document.getElementById("f-firstname").placeholder=t("firstnamePh");
+  document.getElementById("f-lastname").placeholder=t("lastnamePh2");
+  document.getElementById("btn-modal-cancel").textContent=t("modalCancel");
+  document.getElementById("confirm-btn").textContent=t("confirmBtn");
+  document.getElementById("cancel-title").textContent=t("cancelTitle");
+  document.getElementById("cancel-desc").textContent=t("cancelDesc");
+  document.getElementById("lbl-c-lastname").textContent=t("lblLastname");
+  document.getElementById("lbl-c-unit").textContent=t("lblUnit");
+  document.getElementById("c-lastname").placeholder=t("yourLastname");
+  document.getElementById("c-unit").placeholder=t("yourUnit");
+  document.getElementById("btn-cancel-back").textContent=t("cancelBack");
+  document.getElementById("cancel-confirm-btn").textContent=t("cancelConfirm");
+}
+applyTranslations();
+
+let currentDate=new Date();currentDate.setHours(0,0,0,0);
+let pendingSlot=null,pendingCancelId=null;
+
+async function checkPasscode(){
+  const code=document.getElementById("passcode-input").value.trim();
+  const btn=document.getElementById("lock-btn");
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+  try{
+    const res=await fetch("/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code})});
+    if(res.ok){sessionStorage.setItem("auth","1");document.getElementById("lock-screen").style.display="none";document.getElementById("app").style.display="block";renderSlots();}
+    else{document.getElementById("lock-error").textContent=t("lockError");document.getElementById("passcode-input").value="";}
+  }catch{document.getElementById("lock-error").textContent=t("lockNetError");}
+  finally{btn.disabled=false;btn.textContent=t("lockBtn");}
 }
 
-function logout() {
+function logout(){
   sessionStorage.removeItem("auth");
-  document.getElementById("app").style.display = "none";
-  document.getElementById("lock-screen").style.display = "flex";
-  document.getElementById("passcode-input").value = "";
-  document.getElementById("lock-error").textContent = "";
+  document.getElementById("app").style.display="none";
+  document.getElementById("lock-screen").style.display="flex";
+  document.getElementById("passcode-input").value="";
+  document.getElementById("lock-error").textContent="";
 }
 
-document.getElementById("passcode-input").addEventListener("keydown", e => {
-  if (e.key === "Enter") checkPasscode();
-});
+document.getElementById("passcode-input").addEventListener("keydown",e=>{if(e.key==="Enter")checkPasscode();});
+if(sessionStorage.getItem("auth")==="1"){document.getElementById("lock-screen").style.display="none";document.getElementById("app").style.display="block";}
 
-if (sessionStorage.getItem("auth") === "1") {
-  document.getElementById("lock-screen").style.display = "none";
-  document.getElementById("app").style.display = "block";
+function toDateStr(d){return d.toISOString().slice(0,10);}
+function formatDateDisplay(dateStr){
+  const d=new Date(dateStr+"T12:00:00");
+  return T[lang].dayNamesShort[d.getDay()]+" "+d.getDate()+" "+T[lang].monthNamesShort[d.getMonth()]+" "+d.getFullYear();
+}
+function slotStartMs(dateStr,slotLabel){
+  const hhmm=slotLabel.split("-")[0].trim();
+  const[hh,mm]=hhmm.split(":").map(Number);
+  return new Date(dateStr+"T"+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":00").getTime();
+}
+function isSlotInPast(d,s){return slotStartMs(d,s)<Date.now();}
+function isWithin24h(d,s){const diff=(slotStartMs(d,s)-Date.now())/3600000;return diff>=0&&diff<=24;}
+
+function switchTab(tab){
+  document.getElementById("panel-book").style.display=tab==="book"?"block":"none";
+  document.getElementById("panel-my").style.display=tab==="my"?"block":"none";
+  document.getElementById("tab-book").classList.toggle("active",tab==="book");
+  document.getElementById("tab-my").classList.toggle("active",tab==="my");
+  if(tab==="book")renderSlots();
 }
 
-/* ═══════════════════════════════════════════════════════
-   DATE HELPERS
-   ═══════════════════════════════════════════════════════ */
-function toDateStr(d) { return d.toISOString().slice(0, 10); }
-
-function formatDateDisplay(dateStr) {
-  const d = new Date(dateStr + "T12:00:00");
-  const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+function changeDay(delta){
+  const next=new Date(currentDate);next.setDate(next.getDate()+delta);
+  const today=new Date();today.setHours(0,0,0,0);
+  const maxDay=new Date(today);maxDay.setDate(today.getDate()+1);
+  if(next<today||next>maxDay)return;
+  currentDate=next;renderSlots();
 }
 
-function slotStartMs(dateStr, slotLabel) {
-  const hhmm = slotLabel.split("–")[0].trim();
-  const [hh, mm] = hhmm.split(":").map(Number);
-  const d = new Date(`${dateStr}T${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:00`);
-  return d.getTime();
-}
+const SLOTS=["09:00 - 10:30","10:30 - 12:00","12:00 - 13:30","16:00 - 17:30","17:30 - 19:00","19:00 - 20:30","20:30 - 22:00"];
 
-function isSlotInPast(dateStr, slotLabel) {
-  return slotStartMs(dateStr, slotLabel) < Date.now();
-}
-
-function isWithin24h(dateStr, slotLabel) {
-  const diff = (slotStartMs(dateStr, slotLabel) - Date.now()) / 3_600_000;
-  return diff >= 0 && diff <= 24;
-}
-
-/* ═══════════════════════════════════════════════════════
-   TABS
-   ═══════════════════════════════════════════════════════ */
-function switchTab(tab) {
-  document.getElementById("panel-book").style.display = tab === "book" ? "block" : "none";
-  document.getElementById("panel-my").style.display  = tab === "my"   ? "block" : "none";
-  document.getElementById("tab-book").classList.toggle("active", tab === "book");
-  document.getElementById("tab-my").classList.toggle("active",   tab === "my");
-  if (tab === "book") renderSlots();
-}
-
-/* ═══════════════════════════════════════════════════════
-   DATE NAV
-   ═══════════════════════════════════════════════════════ */
-function changeDay(delta) {
-  const next = new Date(currentDate);
-  next.setDate(next.getDate() + delta);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const maxDay = new Date(today); maxDay.setDate(today.getDate() + 1);
-  if (next < today || next > maxDay) return;
-  currentDate = next;
-  renderSlots();
-}
-
-/* ═══════════════════════════════════════════════════════
-   RENDER SLOTS
-   ═══════════════════════════════════════════════════════ */
-const SLOTS = [
-  "09:00 – 10:30","10:30 – 12:00","12:00 – 13:30","16:00 – 17:30",
-  "17:30 – 19:00","19:00 – 20:30","20:30 – 22:00",
-];
-
-async function renderSlots() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const maxDay = new Date(today); maxDay.setDate(today.getDate() + 1);
-  document.getElementById("btn-prev").disabled = (currentDate <= today);
-  document.getElementById("btn-next").disabled = (currentDate >= maxDay);
-
-  const dateStr = toDateStr(currentDate);
-  const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  document.getElementById("day-name").textContent =
-    currentDate.getTime() === today.getTime()
-      ? "Today – " + dayNames[currentDate.getDay()]
-      : dayNames[currentDate.getDay()];
-  document.getElementById("day-date").textContent =
-    `${currentDate.getDate()} ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-
-  const grid = document.getElementById("slots-grid");
-  grid.innerHTML = `<div class="empty-state"><div class="icon">⏳</div>Loading…</div>`;
-
-  let reservations = [];
-  try {
-    const res = await fetch(`/api/reservations?date=${dateStr}`);
-    reservations = await res.json();
-  } catch {
-    grid.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div>Could not load slots. Please refresh.</div>`;
-    return;
-  }
-
-  grid.innerHTML = "";
-  SLOTS.forEach(slot => {
-    const booking = reservations.find(r => r.slot === slot);
-    const inPast = isSlotInPast(dateStr, slot);
-    const canBook = !inPast && isWithin24h(dateStr, slot);
-
-    const card = document.createElement("div");
-    card.className = "slot-card " + (booking ? "booked" : (canBook ? "available" : ""));
-
-    let statusHtml, extraHtml = "";
-    if (booking) {
-      statusHtml = `<span class="slot-status taken">● Booked</span>`;
-      extraHtml = `<div class="slot-booker">
-        <strong>${booking.firstName} ${booking.lastName}</strong> · Unit ${booking.unit} (Phase ${booking.phase})
-        <br>With: ${booking.companions}
-      </div>`;
-    } else if (inPast) {
-      statusHtml = `<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">● Past</span>`;
-    } else if (!canBook) {
-      statusHtml = `<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">● Not yet open</span>`;
-    } else {
-      statusHtml = `<span class="slot-status free">● Available</span>`;
+async function renderSlots(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const maxDay=new Date(today);maxDay.setDate(today.getDate()+1);
+  document.getElementById("btn-prev").disabled=(currentDate<=today);
+  document.getElementById("btn-next").disabled=(currentDate>=maxDay);
+  const dateStr=toDateStr(currentDate);
+  const isToday=currentDate.getTime()===today.getTime();
+  document.getElementById("day-name").textContent=isToday?t("today")+" - "+T[lang].dayNames[currentDate.getDay()]:T[lang].dayNames[currentDate.getDay()];
+  document.getElementById("day-date").textContent=currentDate.getDate()+" "+T[lang].monthNames[currentDate.getMonth()]+" "+currentDate.getFullYear();
+  const grid=document.getElementById("slots-grid");
+  grid.innerHTML='<div class="empty-state"><div class="icon">⏳</div>'+t("loading")+'</div>';
+  let reservations=[];
+  try{const res=await fetch("/api/reservations?date="+dateStr);reservations=await res.json();}
+  catch{grid.innerHTML='<div class="empty-state"><div class="icon">⚠️</div>'+t("loadError")+'</div>';return;}
+  grid.innerHTML="";
+  SLOTS.forEach(slot=>{
+    const booking=reservations.find(r=>r.slot===slot);
+    const inPast=isSlotInPast(dateStr,slot);
+    const canBook=!inPast&&isWithin24h(dateStr,slot);
+    const card=document.createElement("div");
+    card.className="slot-card "+(booking?"booked":(canBook?"available":""));
+    let statusHtml,extraHtml="";
+    if(booking){
+      statusHtml='<span class="slot-status taken">● '+t("statusBooked")+'</span>';
+      extraHtml='<div class="slot-booker"><strong>'+booking.firstName+" "+booking.lastName+"</strong> · Unit "+booking.unit+" (Phase "+booking.phase+")<br>"+t("with")+" "+booking.companions+"</div>";
+    }else if(inPast){
+      statusHtml='<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">● '+t("statusPast")+'</span>';
+    }else if(!canBook){
+      statusHtml='<span class="slot-status" style="background:#f3f4f6;color:#9ca3af;">● '+t("statusNotOpen")+'</span>';
+    }else{
+      statusHtml='<span class="slot-status free">● '+t("statusFree")+'</span>';
     }
-
-    card.innerHTML = `<div class="slot-time">${slot}</div>${statusHtml}${extraHtml}`;
-    if (!booking && canBook) card.addEventListener("click", () => openBookingModal(dateStr, slot));
+    card.innerHTML='<div class="slot-time">'+slot+"</div>"+statusHtml+extraHtml;
+    if(!booking&&canBook)card.addEventListener("click",()=>openBookingModal(dateStr,slot));
     grid.appendChild(card);
   });
 }
 
-/* ═══════════════════════════════════════════════════════
-   BOOKING MODAL
-   ═══════════════════════════════════════════════════════ */
-function openBookingModal(dateStr, slot) {
-  pendingSlot = { date: dateStr, slot };
-  document.getElementById("modal-subtitle").textContent = `${formatDateDisplay(dateStr)} · ${slot}`;
-  ["f-firstname","f-lastname","f-unit","f-companions"].forEach(id => document.getElementById(id).value = "");
-  document.getElementById("f-phase").value = "";
-  document.getElementById("form-error").style.display = "none";
+function openBookingModal(dateStr,slot){
+  pendingSlot={date:dateStr,slot};
+  document.getElementById("modal-subtitle").textContent=formatDateDisplay(dateStr)+" - "+slot;
+  ["f-firstname","f-lastname","f-unit","f-companions"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f-phase").value="";
+  document.getElementById("form-error").style.display="none";
   document.getElementById("modal-overlay").classList.add("open");
 }
+function closeModal(){document.getElementById("modal-overlay").classList.remove("open");pendingSlot=null;}
 
-function closeModal() {
-  document.getElementById("modal-overlay").classList.remove("open");
-  pendingSlot = null;
+async function confirmBooking(){
+  const firstName=document.getElementById("f-firstname").value.trim();
+  const lastName=document.getElementById("f-lastname").value.trim();
+  const unit=document.getElementById("f-unit").value.trim();
+  const phase=document.getElementById("f-phase").value;
+  const companions=document.getElementById("f-companions").value.trim();
+  const errEl=document.getElementById("form-error");
+  if(!firstName||!lastName||!unit||!phase||!companions){errEl.textContent=t("allRequired");errEl.style.display="block";return;}
+  const btn=document.getElementById("confirm-btn");
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> '+t("confirmBtn");
+  try{
+    const res=await fetch("/api/reservations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({date:pendingSlot.date,slot:pendingSlot.slot,firstName,lastName,unit,phase,companions})});
+    const data=await res.json();
+    if(!res.ok){errEl.textContent=data.error;errEl.style.display="block";return;}
+    closeModal();await renderSlots();showToast(t("bookingOk"),"success");
+  }catch{errEl.textContent=t("netError");errEl.style.display="block";}
+  finally{btn.disabled=false;btn.textContent=t("confirmBtn");}
 }
 
-async function confirmBooking() {
-  const firstName  = document.getElementById("f-firstname").value.trim();
-  const lastName   = document.getElementById("f-lastname").value.trim();
-  const unit       = document.getElementById("f-unit").value.trim();
-  const phase      = document.getElementById("f-phase").value;
-  const companions = document.getElementById("f-companions").value.trim();
-  const errEl      = document.getElementById("form-error");
-
-  if (!firstName || !lastName || !unit || !phase || !companions) {
-    errEl.textContent = "All fields are required. Please fill in every field before confirming.";
-    errEl.style.display = "block";
-    return;
+async function loadMyReservations(){
+  const lastName=document.getElementById("lookup-lastname").value.trim();
+  const unit=document.getElementById("lookup-unit").value.trim();
+  const container=document.getElementById("my-res-list");
+  if(!lastName||!unit){container.innerHTML='<div class="empty-state"><div class="icon">⚠️</div>'+t("lookupWarn")+'</div>';return;}
+  container.innerHTML='<div class="empty-state"><div class="icon">⏳</div>'+t("loading")+'</div>';
+  const res=await fetch("/api/my-reservations?lastName="+encodeURIComponent(lastName)+"&unit="+encodeURIComponent(unit));
+  const reservations=await res.json();
+  if(!Array.isArray(reservations)||reservations.length===0){container.innerHTML='<div class="empty-state"><div class="icon">📭</div>'+t("noRes",lastName,unit)+'</div>';return;}
+  const upcoming=reservations.filter(r=>!isSlotInPast(r.date,r.slot));
+  const past=reservations.filter(r=>isSlotInPast(r.date,r.slot));
+  let html="";
+  if(upcoming.length>0){
+    html+='<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">'+t("upcoming")+'</h3><div class="res-list">'+upcoming.map(r=>'<div class="res-item"><div class="res-item-info"><div class="res-date">'+formatDateDisplay(r.date)+'</div><div class="res-slot">'+r.slot+'</div><div class="res-companions">'+t("with")+" "+r.companions+'</div></div><button class="btn-cancel" onclick="openCancelModal(\''+r.id+'\',\''+r.date+'\',\''+r.slot+'\')">'+t("cancel")+'</button></div>').join("")+"</div>";
   }
-
-  const btn = document.getElementById("confirm-btn");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Booking…';
-
-  try {
-    const res = await fetch("/api/reservations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date: pendingSlot.date, slot: pendingSlot.slot, firstName, lastName, unit, phase, companions }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      errEl.textContent = data.error;
-      errEl.style.display = "block";
-      return;
-    }
-    closeModal();
-    await renderSlots();
-    showToast("Booking confirmed! 🎾", "success");
-  } catch {
-    errEl.textContent = "Network error. Please try again.";
-    errEl.style.display = "block";
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "Confirm booking";
+  if(past.length>0){
+    html+='<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:24px 0 12px;">'+t("past")+'</h3><div class="res-list">'+past.map(r=>'<div class="res-item" style="opacity:.55;"><div class="res-item-info"><div class="res-date">'+formatDateDisplay(r.date)+'</div><div class="res-slot">'+r.slot+'</div><div class="res-companions">'+t("with")+" "+r.companions+'</div></div><span style="font-size:12px;color:#9ca3af;">'+t("past")+'</span></div>').join("")+"</div>";
   }
+  container.innerHTML=html;
 }
 
-/* ═══════════════════════════════════════════════════════
-   MY RESERVATIONS
-   ═══════════════════════════════════════════════════════ */
-async function loadMyReservations() {
-  const lastName = document.getElementById("lookup-lastname").value.trim();
-  const unit     = document.getElementById("lookup-unit").value.trim();
-  const container = document.getElementById("my-res-list");
-
-  if (!lastName || !unit) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div>Please enter your last name and unit number.</div>`;
-    return;
-  }
-
-  container.innerHTML = `<div class="empty-state"><div class="icon">⏳</div>Loading…</div>`;
-
-  const res = await fetch(`/api/my-reservations?lastName=${encodeURIComponent(lastName)}&unit=${encodeURIComponent(unit)}`);
-  const reservations = await res.json();
-
-  if (!Array.isArray(reservations) || reservations.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">📭</div>No reservations found for <strong>${lastName}</strong> · Unit ${unit}.</div>`;
-    return;
-  }
-
-  const upcoming = reservations.filter(r => !isSlotInPast(r.date, r.slot));
-  const past     = reservations.filter(r =>  isSlotInPast(r.date, r.slot));
-
-  let html = "";
-  if (upcoming.length > 0) {
-    html += `<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Upcoming</h3>
-    <div class="res-list">` + upcoming.map(r => `
-      <div class="res-item">
-        <div class="res-item-info">
-          <div class="res-date">${formatDateDisplay(r.date)}</div>
-          <div class="res-slot">${r.slot}</div>
-          <div class="res-companions">With: ${r.companions}</div>
-        </div>
-        <button class="btn-cancel" onclick="openCancelModal('${r.id}','${r.date}','${r.slot}')">Cancel</button>
-      </div>`).join("") + `</div>`;
-  }
-  if (past.length > 0) {
-    html += `<h3 style="font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:24px 0 12px;">Past</h3>
-    <div class="res-list">` + past.map(r => `
-      <div class="res-item" style="opacity:.55;">
-        <div class="res-item-info">
-          <div class="res-date">${formatDateDisplay(r.date)}</div>
-          <div class="res-slot">${r.slot}</div>
-          <div class="res-companions">With: ${r.companions}</div>
-        </div>
-        <span style="font-size:12px;color:#9ca3af;">Past</span>
-      </div>`).join("") + `</div>`;
-  }
-  container.innerHTML = html;
-}
-
-/* ═══════════════════════════════════════════════════════
-   CANCEL MODAL
-   ═══════════════════════════════════════════════════════ */
-function openCancelModal(id, date, slot) {
-  pendingCancelId = id;
-  document.getElementById("cancel-subtitle").textContent = `${formatDateDisplay(date)} · ${slot}`;
-  document.getElementById("c-lastname").value = "";
-  document.getElementById("c-unit").value = "";
-  document.getElementById("cancel-error").style.display = "none";
+function openCancelModal(id,date,slot){
+  pendingCancelId=id;
+  document.getElementById("cancel-subtitle").textContent=formatDateDisplay(date)+" - "+slot;
+  document.getElementById("c-lastname").value="";
+  document.getElementById("c-unit").value="";
+  document.getElementById("cancel-error").style.display="none";
   document.getElementById("cancel-overlay").classList.add("open");
 }
+function closeCancelModal(){document.getElementById("cancel-overlay").classList.remove("open");pendingCancelId=null;}
 
-function closeCancelModal() {
-  document.getElementById("cancel-overlay").classList.remove("open");
-  pendingCancelId = null;
+async function confirmCancel(){
+  const lastName=document.getElementById("c-lastname").value.trim();
+  const unit=document.getElementById("c-unit").value.trim();
+  const errEl=document.getElementById("cancel-error");
+  if(!lastName||!unit){errEl.textContent=t("lookupWarn");errEl.style.display="block";return;}
+  const btn=document.getElementById("cancel-confirm-btn");
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> '+t("cancelConfirm");
+  try{
+    const res=await fetch("/api/reservations/"+pendingCancelId,{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({lastName,unit})});
+    const data=await res.json();
+    if(!res.ok){errEl.textContent=data.error;errEl.style.display="block";return;}
+    closeCancelModal();await loadMyReservations();showToast(t("cancelOk"),"error");
+  }catch{errEl.textContent=t("netError");errEl.style.display="block";}
+  finally{btn.disabled=false;btn.textContent=t("cancelConfirm");}
 }
 
-async function confirmCancel() {
-  const lastName = document.getElementById("c-lastname").value.trim();
-  const unit     = document.getElementById("c-unit").value.trim();
-  const errEl    = document.getElementById("cancel-error");
-
-  if (!lastName || !unit) {
-    errEl.textContent = "Please enter your last name and unit number.";
-    errEl.style.display = "block";
-    return;
-  }
-
-  const btn = document.getElementById("cancel-confirm-btn");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Cancelling…';
-
-  try {
-    const res = await fetch(`/api/reservations/${pendingCancelId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ lastName, unit }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      errEl.textContent = data.error;
-      errEl.style.display = "block";
-      return;
-    }
-    closeCancelModal();
-    await loadMyReservations();
-    showToast("Reservation cancelled.", "error");
-  } catch {
-    errEl.textContent = "Network error. Please try again.";
-    errEl.style.display = "block";
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "Yes, cancel";
-  }
-}
-
-/* ═══════════════════════════════════════════════════════
-   TOAST
-   ═══════════════════════════════════════════════════════ */
 let toastTimer;
-function showToast(msg, type = "") {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "show " + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ""; }, 3200);
+function showToast(msg,type=""){
+  const el=document.getElementById("toast");el.textContent=msg;el.className="show "+type;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.className="";},3200);
 }
 
-/* ═══════════════════════════════════════════════════════
-   CLOSE MODALS ON OVERLAY CLICK
-   ═══════════════════════════════════════════════════════ */
-document.getElementById("modal-overlay").addEventListener("click", e => {
-  if (e.target.id === "modal-overlay") closeModal();
-});
-document.getElementById("cancel-overlay").addEventListener("click", e => {
-  if (e.target.id === "cancel-overlay") closeCancelModal();
-});
-
-/* ═══════════════════════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════════════════════ */
-if (sessionStorage.getItem("auth") === "1") renderSlots();
+document.getElementById("modal-overlay").addEventListener("click",e=>{if(e.target.id==="modal-overlay")closeModal();});
+document.getElementById("cancel-overlay").addEventListener("click",e=>{if(e.target.id==="cancel-overlay")closeCancelModal();});
+if(sessionStorage.getItem("auth")==="1")renderSlots();
 </script>
 </body>
 </html>
