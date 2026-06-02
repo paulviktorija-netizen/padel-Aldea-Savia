@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Padel Court — Aldea Savia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
   <style>
     :root {
       --green: #2e7d4f; --green-light: #e8f5ee; --green-mid: #4caf78;
@@ -21,7 +23,9 @@
     .lang-toggle.lock .lang-btn.active { border-color: rgba(255,255,255,.7); opacity: 1; }
     #lock-screen { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; background: linear-gradient(135deg, #1a4731 0%, #2e7d4f 60%, #4caf78 100%); }
     #lock-screen .card { background: var(--white); border-radius: 16px; padding: 40px 36px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.25); text-align: center; }
-    #lock-screen .logo { font-size: 48px; margin-bottom: 12px; }
+    #lock-screen .logo { margin-bottom: 28px; }
+    #lock-screen .logo .logo-main { font-family: 'Cormorant Garamond', 'Garamond', 'Georgia', serif; font-size: 32px; font-weight: 300; letter-spacing: 6px; color: #2b2d3a; text-transform: uppercase; display: block; }
+    #lock-screen .logo .logo-sub { font-family: 'Cormorant Garamond', 'Garamond', 'Georgia', serif; font-size: 13px; font-weight: 400; letter-spacing: 5px; color: #2b2d3a; text-transform: uppercase; display: block; margin-top: 4px; }
     #lock-screen h1 { font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
     #lock-screen .subtitle { font-size: 13px; color: var(--gray); margin-bottom: 28px; }
     #lock-screen input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; letter-spacing: 3px; text-align: center; margin-bottom: 12px; outline: none; transition: border-color .2s; }
@@ -115,9 +119,12 @@
     <button class="lang-btn" id="lock-lang-es" onclick="setLang('es')" title="Espanol">&#127466;&#127480;</button>
   </div>
   <div class="card">
-    <div class="logo">&#127934;</div>
-    <h1>Padel Court</h1>
-    <div class="subtitle">Aldea Savia &middot; Tulum &middot; Phase 3</div>
+    <div class="logo">
+      <span class="logo-main">Aldea Savia</span>
+      <span class="logo-sub">Tulum</span>
+    </div>
+    <h1>&#127934; Padel Court</h1>
+    <div class="subtitle">Phase 3 &middot; Residents only</div>
     <p id="lock-desc" style="font-size:13px;color:#6b7280;margin-bottom:20px;"></p>
     <input type="password" id="passcode-input" autocomplete="off" />
     <div class="error" id="lock-error"></div>
