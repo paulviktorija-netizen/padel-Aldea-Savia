@@ -130,8 +130,13 @@ app.post("/api/reservations", async (req, res) => {
   const { date, slot, firstName, lastName, unit, phase, companions } = req.body;
   if (!date || !slot || !firstName || !lastName || !unit || !phase || !companions)
     return res.status(400).json({ error: "All fields are required." });
-  if (!SLOTS.includes(slot))
+    if (!SLOTS.includes(slot)) {
     return res.status(400).json({ error: "Invalid slot." });
+  }
+
+  const LAUNCH_DATE = process.env.LAUNCH_DATE;
+  if (LAUNCH_DATE && date < LAUNCH_DATE)
+    return res.status(400).json({ error: "Reservations are not open yet. The platform launches on Friday June 6 — see you then! 🎾" });
 
   const now    = Date.now();
   const slotMs = slotStartMs(date, slot);
