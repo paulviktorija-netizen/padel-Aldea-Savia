@@ -36,9 +36,11 @@ const SECRET_PIN  = process.env.SECRET_PIN  || "47";
 const ADMIN_KEY   = process.env.ADMIN_KEY   || "admin123";
 
 function getMonthlyCode() {
-  const now  = new Date();
-  const mm   = String(now.getMonth() + 1).padStart(2, "0");
-  const yyyy = now.getFullYear();
+  // Mois calculé en heure de Tulum (UTC-5), pas en UTC serveur — sinon le code
+  // bascule au mois suivant dès 19h locale le dernier jour du mois.
+  const now  = new Date(Date.now() - 5 * 60 * 60 * 1000);
+  const mm   = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const yyyy = now.getUTCFullYear();
   const hash = crypto.createHash("md5").update(SECRET_PIN + mm + yyyy).digest("hex");
   const twoDigits = String(parseInt(hash.slice(0, 4), 16) % 90 + 10);
   return (SECRET_BASE + twoDigits).toUpperCase();
@@ -85,7 +87,9 @@ app.post("/api/auth", (req, res) => {
 app.get("/api/admin/code", (req, res) => {
   if (req.query.key !== ADMIN_KEY) return res.status(403).json({ error: "Forbidden." });
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  const now = new Date();
+  // Même correction de fuseau que getMonthlyCode : mois de référence en heure de Tulum
+  const nowTulum = new Date(Date.now() - TULUM_OFFSET_MS);
+  const now = new Date(nowTulum.getUTCFullYear(), nowTulum.getUTCMonth(), 1);
   const codes = [];
   for (let i = 0; i < 6; i++) {
     const d    = new Date(now.getFullYear(), now.getMonth() + i, 1);
